@@ -62,51 +62,51 @@ def process_obj (tokens):
 
     if tokens[4] == "bng":
         if tokens[9] != "empty":
-            messages.add((tokens[9].replace('\\',''),'s'))
+            messages.add((tokens[9].replace('\\',''),'S'))
         if tokens[10] != "empty":
-            messages.add((tokens[10].replace('\\',''),'r'))
+            messages.add((tokens[10].replace('\\',''),'R'))
     elif tokens[4] == "cnv":
         if tokens[8] != "empty":
-            messages.add((tokens[8].replace('\\',''),'s'))
+            messages.add((tokens[8].replace('\\',''),'S'))
         if tokens[9] != "empty":
-            messages.add((tokens[9].replace('\\',''),'r'))
+            messages.add((tokens[9].replace('\\',''),'R'))
     elif tokens[4] == "tgl":
         if tokens[7] != "empty":
-            messages.add((tokens[7].replace('\\',''),'s'))
+            messages.add((tokens[7].replace('\\',''),'S'))
         if tokens[8] != "empty":
-            messages.add((tokens[8].replace('\\',''),'r'))
+            messages.add((tokens[8].replace('\\',''),'R'))
     elif tokens[4] == "nbx":
         if tokens[11] != "empty":
-            messages.add((tokens[11].replace('\\',''),'s'))
+            messages.add((tokens[11].replace('\\',''),'S'))
         if tokens[12] != "empty":
-            messages.add((tokens[12].replace('\\',''),'r'))
+            messages.add((tokens[12].replace('\\',''),'R'))
     elif tokens[4] == "vsl":
         if tokens[11] != "empty":
-            messages.add((tokens[11].replace('\\',''),'s'))
+            messages.add((tokens[11].replace('\\',''),'S'))
         if tokens[12] != "empty":
-            messages.add((tokens[12].replace('\\',''),'r'))
+            messages.add((tokens[12].replace('\\',''),'R'))
     elif tokens[4] == "hsl":
         if tokens[11] != "empty":
-            messages.add((tokens[11].replace('\\',''),'s'))
+            messages.add((tokens[11].replace('\\',''),'S'))
         if tokens[12] != "empty":
-            messages.add((tokens[12].replace('\\',''),'r'))
+            messages.add((tokens[12].replace('\\',''),'R'))
     elif tokens[4] == "vradio":
         if tokens[9] != "empty":
-            messages.add((tokens[9].replace('\\',''),'s'))
+            messages.add((tokens[9].replace('\\',''),'S'))
         if tokens[10] != "empty":
-            messages.add((tokens[10].replace('\\',''),'r'))
+            messages.add((tokens[10].replace('\\',''),'R'))
     elif tokens[4] == "hradio":
         if tokens[9] != "empty":
-            messages.add((tokens[9].replace('\\',''),'s'))
+            messages.add((tokens[9].replace('\\',''),'S'))
         if tokens[10] != "empty":
-            messages.add((tokens[10].replace('\\',''),'r'))
+            messages.add((tokens[10].replace('\\',''),'R'))
     elif tokens[4] == "vu":
         if tokens[7] != "empty":
-            messages.add((tokens[7].replace('\\',''),'r'))
+            messages.add((tokens[7].replace('\\',''),'R'))
     elif tokens[4] == "send" or tokens[4] == "s":
-        messages.add((tokens[5].replace('\\',''),'s'))
+        messages.add((tokens[5].replace('\\',''),'S'))
     elif tokens[4] == "receive" or tokens[4] == "r":
-        messages.add((tokens[5].replace('\\',''),'r'))
+        messages.add((tokens[5].replace('\\',''),'R'))
     else:       # must be abstraction
         if tokens[4] != "declare":
             objects.add(tokens[4])
@@ -132,20 +132,22 @@ def process_element (tokens):
         return
     elif tokens[1] == "floatatom":
         if tokens[9] != "-":
-            messages.add((tokens[9].replace('\\',''),'r'))
+            messages.add((tokens[9].replace('\\',''),'R'))
         if tokens[10] != "-":
-            messages.add((tokens[10].replace('\\',''),'s'))
+            messages.add((tokens[10].replace('\\',''),'S'))
         return
     elif tokens[1] == "msg":
-        msgs = tokens[4:6]
-#        print("msgs: "+str(msgs))
+        if tokens[4] != "\;":   # ignore if not multi-line msg
+            return
+        msgs = tokens[5:6]
+        print("msgs: "+str(msgs))
         msgs = str(''.join(msgs))
-#        print("msgs: "+str(msgs))
+        print("msgs: "+str(msgs))
         msgs = msgs.split("\;")
         for msg in msgs:
             if msg != "":
-#                print("msg: "+msg)
-                messages.add((msg.replace('\\',''),'s'))
+                print("msg: "+msg)
+                messages.add((msg.replace('\\',''),'S'))
         return
     elif tokens[1] == "obj":
         process_obj(tokens)
@@ -154,9 +156,9 @@ def process_element (tokens):
         return
     elif tokens[1] == "symbolatom":
         if tokens[9] != "-":
-            messages.add((tokens[9].replace('\\',''),'r'))
+            messages.add((tokens[9].replace('\\',''),'R'))
         if tokens[10] != "-":
-            messages.add((tokens[10].replace('\\',''),'s'))
+            messages.add((tokens[10].replace('\\',''),'S'))
         return
     elif tokens[1] == "text":
         return
@@ -193,7 +195,8 @@ def process_line (line):
     elif tokens[0] == "#A":     # array
         process_array(tokens)
     else:
-        sys.stderr.write("Invalid chunk type: " + tokens[0] + "\n")
+        sys.stderr.write("Invalid chunk type:\n")
+        sys.stderr.write(str(tokens)+"\n")
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -239,10 +242,10 @@ if __name__ == "__main__":
     # Write to output:
     
     for msg in set2list(messages):
-        print(name+", message, "+msg[0]+", "+msg[1])
+        print(name+",message,"+msg[0]+","+msg[1])
     for obj in set2list(objects):
-        print(name+", object, "+obj)
+        print(name+",object,"+obj)
     for arr in set2list(arrays):
-        print(name+", array, "+arr)
+        print(name+",array,"+arr)
     for lib in set2list(libraries):
-        print(name+", library, "+lib)
+        print(name+",library,"+lib)
